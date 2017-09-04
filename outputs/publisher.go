@@ -1,6 +1,8 @@
 package outputs
 
 import (
+	"bytes"
+
 	"github.com/negbie/fluxify/decoder"
 	"github.com/negbie/fluxify/logp"
 )
@@ -33,7 +35,11 @@ func (pub *Publisher) output(pkt *decoder.Packet) {
 			logp.Err("%v", err)
 		}
 	}()
-	pub.outputer.Output(pkt.Payload)
+	if pos := bytes.LastIndex(pkt.Payload, []byte("postgres_prefix=")); pos >= 0 {
+		rest := pkt.Payload[pos:]
+		message := rest[16:bytes.Index(rest, []byte(" "))]
+		pub.outputer.Output(message)
+	}
 }
 
 func (pub *Publisher) Start() {

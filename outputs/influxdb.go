@@ -98,10 +98,11 @@ func (i *InfluxdbOutputer) Output(msg []byte) {
 
 func (i *InfluxdbOutputer) Send(msg []byte) {
 	tags := map[string]string{
-		"host": "sniffer",
+		"host":   "sniffer",
+		"prefix": string(msg),
 	}
 	fields := map[string]interface{}{
-		"prefix": string(msg),
+		"value": 1,
 	}
 
 	defer func() {
